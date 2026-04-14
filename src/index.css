@@ -1,0 +1,38 @@
+:root {
+  --bg-page: #f4f8ff;
+  --bg-surface: #ffffff;
+  --bg-soft: #e9f0ff;
+  --primary: #123ea8;
+  --primary-dark: #0e3184;
+  --secondary: #e53935;
+  --secondary-dark: #c62828;
+  --secondary-soft: #fde7e7;
+  --accent: #123ea8;
+  --text-main: #0f172a;
+  --text-muted: #475569;
+  --border-soft: #d5e0f2;
+  --shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.08);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  font-family: "Segoe UI", "Inter", "Trebuchet MS", sans-serif;
+  color: var(--text-main);
+  background:
+    radial-gradient(circle at 12% 8%, #dfe9ff 0, transparent 34%),
+    radial-gradient(circle at 90% 90%, #ffe8e8 0, transparent 34%),
+    var(--bg-page);
+}
+
+

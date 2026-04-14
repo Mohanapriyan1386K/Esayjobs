@@ -1,0 +1,69 @@
+.construction-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: var(--bg-page);
+  text-align: center;
+  font-family: "Segoe UI", sans-serif;
+  color: var(--text-main);
+}
+
+.construction-title {
+  margin-top: 20px;
+  font-size: 2rem;
+  animation: bounce 2s infinite;
+}
+
+.construction-text {
+  margin-top: 10px;
+  font-size: 1rem;
+  color: var(--text-muted);
+}
+
+/* Cone animation */
+.construction-animation {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+
+.cone {
+  width: 0;
+  height: 0;
+  border-left: 25px solid transparent;
+  border-right: 25px solid transparent;
+  border-bottom: 50px solid var(--secondary);
+  animation: shake 1s infinite;
+  margin: 0 auto;
+}
+
+/* Hammer animation */
+.hammer {
+  width: 10px;
+  height: 50px;
+  background: var(--primary);
+  position: absolute;
+  top: 0;
+  left: 45px;
+  transform-origin: top;
+  animation: swing 1s infinite ease-in-out;
+}
+
+@keyframes swing {
+  0% { transform: rotate(-20deg); }
+  50% { transform: rotate(20deg); }
+  100% { transform: rotate(-20deg); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
