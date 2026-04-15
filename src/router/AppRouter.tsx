@@ -5,6 +5,7 @@ import Job from "../Screens/Job";
 import BlogScreen from "../Screens/BlogScreen";
 import UserPosts from "../Screens/UserPosts";
 import ProtectedRoute from "./ProtectedRoute";
+import Jobdeatils from "../Screens/Jobdeatils";
 
 const AppRouter = () => {
   return (
@@ -13,6 +14,7 @@ const AppRouter = () => {
         <Route path="/" element={<MainLayout />}>
           <Route index element={<About />} />
           <Route path="jobs" element={<Job />} />
+          <Route path="jobs/:id" element={<Jobdeatils />} />
           <Route path="blogs" element={<BlogScreen />} />
           <Route path="about" element={<About />} />
           {/* <Route path="userposts" element={<UserPosts/>}/> */}

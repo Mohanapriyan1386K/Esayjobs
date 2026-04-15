@@ -35,10 +35,32 @@ export type LikeParams={
 export type PostPayload = {
   userId: string;
   jobtype: string;
+  applyType: "walk-in" | "online";
   title: string;
-  description: string;
+  content: string;
   location: string;
   salary: string;
   company: string;
   applyLink: string;
+  description?: string;
+  details: {
+    companyName: string;
+    interviewLocation: string;
+    interviewTimings: string;
+    interviewDate: string;
+    jobRole: string;
+    salaryInfo: string;
+    graduation: string;
+    yearOfPassout: string;
+    vacancy: string;
+    shift: string;
+    shiftTimings: string;
+    weeklyOff: string;
+    note: string;
+    bondAndAgreement: string;
+    hrName: string;
+    hrNumber: string;
+    rounds: string;
+    walkInInfo: string;
+  };
 };

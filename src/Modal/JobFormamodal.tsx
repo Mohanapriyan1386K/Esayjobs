@@ -1,4 +1,4 @@
-import { useFormik } from "formik";
+import { getIn, useFormik } from "formik";
 import * as Yup from "yup";
 import CustomDropdown from "../Component/CustomDropdown";
 import CustomTextField from "../Component/CustomTextField";
@@ -16,12 +16,35 @@ function JobFormamodal({ mode, onok, data }: any) {
 
   const initialValues = {
     jobtype: data?.jobtype ?? "",
+    applyType:
+      data?.applyType ??
+      (data?.applyLink?.toLowerCase()?.includes("walk") ? "walk-in" : "online"),
     title: data?.title ?? "",
-    description: data?.description ?? "",
+    content: data?.content ?? data?.description ?? "",
     location: data?.location ?? "",
     salary: data?.salary ?? "",
     company: data?.company ?? "",
     applyLink: data?.applyLink ?? "",
+    details: {
+      companyName: data?.details?.companyName ?? data?.company ?? "",
+      interviewLocation: data?.details?.interviewLocation ?? data?.location ?? "",
+      interviewTimings: data?.details?.interviewTimings ?? "",
+      interviewDate: data?.details?.interviewDate ?? "",
+      jobRole: data?.details?.jobRole ?? data?.title ?? "",
+      salaryInfo: data?.details?.salaryInfo ?? data?.salary ?? "",
+      graduation: data?.details?.graduation ?? "",
+      yearOfPassout: data?.details?.yearOfPassout ?? "",
+      vacancy: data?.details?.vacancy ?? "",
+      shift: data?.details?.shift ?? "",
+      shiftTimings: data?.details?.shiftTimings ?? "",
+      weeklyOff: data?.details?.weeklyOff ?? "",
+      note: data?.details?.note ?? "",
+      bondAndAgreement: data?.details?.bondAndAgreement ?? "",
+      hrName: data?.details?.hrName ?? "",
+      hrNumber: data?.details?.hrNumber ?? "",
+      rounds: data?.details?.rounds ?? "",
+      walkInInfo: data?.details?.walkInInfo ?? "",
+    },
   };
 
   console.log(userdata?.user._id, "userid");
@@ -29,19 +52,40 @@ function JobFormamodal({ mode, onok, data }: any) {
 
   const validationSchema = Yup.object({
     jobtype: Yup.string().required("Job type is required"),
+    applyType: Yup.string()
+      .oneOf(["walk-in", "online"])
+      .required("Apply type is required"),
     title: Yup.string().required("Title is required"),
-    description: Yup.string().required("Description is required"),
+    content: Yup.string(),
     location: Yup.string().required("Location is required"),
-
-    salary: Yup.number()
-      .transform((_value, originalValue) =>
-        originalValue === "" ? undefined : Number(originalValue),
-      )
-      .typeError("Salary must be a number")
-      .required("Salary is required"),
-
+    salary: Yup.string(),
     company: Yup.string().required("Company is required"),
-    applyLink: Yup.string().url("Invalid URL").required("Link is required"),
+    applyLink: Yup.string().when("applyType", {
+      is: "online",
+      then: (schema) =>
+        schema.url("Enter valid URL").required("Apply link is required"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    details: Yup.object({
+      companyName: Yup.string(),
+      interviewLocation: Yup.string(),
+      interviewTimings: Yup.string(),
+      interviewDate: Yup.string(),
+      jobRole: Yup.string(),
+      salaryInfo: Yup.string(),
+      graduation: Yup.string(),
+      yearOfPassout: Yup.string(),
+      vacancy: Yup.string(),
+      shift: Yup.string(),
+      shiftTimings: Yup.string(),
+      weeklyOff: Yup.string(),
+      note: Yup.string(),
+      bondAndAgreement: Yup.string(),
+      hrName: Yup.string(),
+      hrNumber: Yup.string(),
+      rounds: Yup.string(),
+      walkInInfo: Yup.string(),
+    }),
   });
 
   const formik = useFormik({
@@ -58,6 +102,7 @@ function JobFormamodal({ mode, onok, data }: any) {
       const payload = {
         userId,
         ...values,
+        description: values.content,
       };
 
       if (mode === "Edit") {
@@ -96,8 +141,42 @@ function JobFormamodal({ mode, onok, data }: any) {
     },
   });
 
-  const { values, errors, handleSubmit, setFieldValue, handleChange, touched } =
-    formik;
+  const {
+    values,
+    errors,
+    handleSubmit,
+    setFieldValue,
+    handleChange,
+    handleBlur,
+    touched,
+  } = formik;
+
+  const getError = (field: string) => {
+    const fieldTouched = getIn(touched, field);
+    const fieldError = getIn(errors, field);
+    return fieldTouched && fieldError ? String(fieldError) : "";
+  };
+
+  const detailsFields = [
+    { name: "details.companyName", label: "Company Name" },
+    { name: "details.interviewLocation", label: "Interview Location" },
+    { name: "details.interviewTimings", label: "Interview Timings" },
+    { name: "details.interviewDate", label: "Interview Date" },
+    { name: "details.jobRole", label: "Job Role" },
+    { name: "details.salaryInfo", label: "Salary Info" },
+    { name: "details.graduation", label: "Graduation" },
+    { name: "details.yearOfPassout", label: "Year Of Passout" },
+    { name: "details.vacancy", label: "Vacancy" },
+    { name: "details.shift", label: "Shift" },
+    { name: "details.shiftTimings", label: "Shift Timings" },
+    { name: "details.weeklyOff", label: "Weekly Off" },
+    { name: "details.note", label: "Note" },
+    { name: "details.bondAndAgreement", label: "Bond And Agreement" },
+    { name: "details.hrName", label: "HR Name" },
+    { name: "details.hrNumber", label: "HR Number" },
+    { name: "details.rounds", label: "Rounds" },
+    { name: "details.walkInInfo", label: "Walk-in Info" },
+  ];
 
   return (
     <form onSubmit={handleSubmit}>
@@ -106,11 +185,27 @@ function JobFormamodal({ mode, onok, data }: any) {
         label="Job Type"
         value={values.jobtype}
         options={[
+          {label:"NON IT",value:"non-it"},
           { label: "IT", value: "it" },
           { label: "Government", value: "government" },
           { label: "Core", value: "core" },
         ]}
         onChange={(val) => setFieldValue("jobtype", val)}
+      />
+
+      <CustomDropdown
+        label="Apply Type"
+        value={values.applyType}
+        options={[
+          { label: "Walk-in", value: "walk-in" },
+          { label: "Online", value: "online" },
+        ]}
+        onChange={(val) => {
+          setFieldValue("applyType", val);
+          if (val === "walk-in" && !values.applyLink) {
+            setFieldValue("applyLink", "walk-in");
+          }
+        }}
       />
 
       {/* Title */}
@@ -122,13 +217,14 @@ function JobFormamodal({ mode, onok, data }: any) {
         formik={formik}
       />
 
-      {/* Description */}
+      {/* Content */}
       <div>
-        <label>Description</label>
+        <label>Content</label>
         <textarea
-          name="description"
-          value={values.description}
+          name="content"
+          value={values.content}
           onChange={handleChange}
+          onBlur={handleBlur}
           rows={4}
           style={{
             width: "100%",
@@ -137,9 +233,8 @@ function JobFormamodal({ mode, onok, data }: any) {
             border: "1px solid var(--border-soft)",
           }}
         />
-        {touched.description && errors.description && (
-          //@ts-ignore
-          <p style={{ color: "red" }}>{errors.description}</p>
+        {getError("content") && (
+          <p style={{ color: "red" }}>{getError("content")}</p>
         )}
       </div>
 
@@ -157,7 +252,7 @@ function JobFormamodal({ mode, onok, data }: any) {
         name="salary"
         labelname="Salary"
         value={values.salary}
-        type="number"
+        type="text"
         onChange={handleChange}
         formik={formik}
       />
@@ -172,13 +267,49 @@ function JobFormamodal({ mode, onok, data }: any) {
       />
 
       {/* Link */}
-      <CustomTextField
-        name="applyLink"
-        labelname="Apply Link"
-        value={values.applyLink}
-        onChange={handleChange}
-        formik={formik}
-      />
+      {values.applyType === "online" ? (
+        <CustomTextField
+          name="applyLink"
+          labelname="Apply Link"
+          value={values.applyLink}
+          onChange={handleChange}
+          formik={formik}
+        />
+      ) : (
+        <CustomTextField
+          name="applyLink"
+          labelname="Apply Link"
+          value={values.applyLink || "walk-in"}
+          disabled
+          onChange={handleChange}
+          formik={formik}
+        />
+      )}
+
+      <p style={{ marginTop: 8, marginBottom: 10, fontWeight: 600 }}>
+        Additional Job Details
+      </p>
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
+          gap: 12,
+        }}
+      >
+        {detailsFields.map((field) => (
+          <CustomTextField
+            key={field.name}
+            name={field.name}
+            labelname={field.label}
+            value={String(getIn(values, field.name) ?? "")}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            error={Boolean(getError(field.name))}
+            helperText={getError(field.name)}
+          />
+        ))}
+      </div>
 
       {/* Submit */}
       <div style={{ display: "flex", justifyContent: "flex-end" }}>

@@ -12,16 +12,38 @@ export interface Post {
   _id: string;
   userId: string;
   type: PostType;
-applyLink?:string;
+  applyType?: "walk-in" | "online";
+  applyLink?: string;
   title: string;
   image?: string;
   description: string;
+  content?: string;
   company?: string;
-  salary?: number;
+  salary?: string;
   location?: string;
+  jobtype?: string;
+  details?: {
+    companyName?: string;
+    interviewLocation?: string;
+    interviewTimings?: string;
+    interviewDate?: string;
+    jobRole?: string;
+    salaryInfo?: string;
+    graduation?: string;
+    yearOfPassout?: string;
+    vacancy?: string;
+    shift?: string;
+    shiftTimings?: string;
+    weeklyOff?: string;
+    note?: string;
+    bondAndAgreement?: string;
+    hrName?: string;
+    hrNumber?: string;
+    rounds?: string;
+    walkInInfo?: string;
+  };
   likes: string[]; // array of userIds
   comments: Comment[];
   createdAt: string;
   updatedAt: string;
-
 }

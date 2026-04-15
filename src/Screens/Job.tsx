@@ -9,6 +9,7 @@ import {
   Chip,
   IconButton,
   Drawer,
+  Button,
 } from "@mui/material";
 import { getPost, likePost } from "../Service/Service";
 import type { Post } from "./type";
@@ -26,6 +27,7 @@ import { useDispatch, useSelector } from "react-redux";
 import type { RootState } from "../Redux/store";
 import toast from "react-hot-toast";
 import { openModal } from "../Redux/Slice/ModalSlice";
+import { useNavigate } from "react-router-dom";
 dayjs.extend(relativeTime);
 
 function Job() {
@@ -35,6 +37,7 @@ function Job() {
   const [loadingMore, setLoadingMore] = useState(false);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [filter, setFilter] = useState({
     title: "",
     companyname: "",
@@ -47,6 +50,10 @@ function Job() {
   const { isAuthenticated, userdata } = useSelector(
     (state: RootState) => state.auth,
   );
+
+  const isWalkIn = (post: Post) =>
+    post.applyType === "walk-in" ||
+    (!!post.applyLink && post.applyLink.trim().toLowerCase().includes("walk"));
 
 
   const handleLike = (postId: string) => {
@@ -281,7 +288,7 @@ function Job() {
       ) : (
         <Grid container spacing={isMobile ? 1 : 3}>
           {posts.map((post) => (
-            <Grid size={{ xs: 6, sm: 6, md: 4 }} key={post._id}>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={post._id}>
               <Card
                 sx={{
                   borderRadius: 4,
@@ -349,36 +356,51 @@ function Job() {
                     {post.title}
                   </Typography>
 
-                  <Typography
-                    sx={{
-                      mt: 1,
-                      color: "var(--text-muted)",
-                      display: "-webkit-box",
-                      WebkitLineClamp: 2,
-                      WebkitBoxOrient: "vertical",
-                      overflow: "hidden",
-                      minHeight: "48px",
-                    }}
-                  >
-                    {post.description}
-                  </Typography>
-
                   <Box sx={{ mt: 1.5, display: "grid", gap: 0.7 }}>
                     <Typography
                       sx={{ fontSize: 12, color: "var(--text-muted)" }}
                     >
-                      Company:{post.company || "-"}
+                      Company: {post.company || post.details?.companyName || "-"}
                     </Typography>
                     <Typography
                       sx={{ fontSize: 12, color: "var(--text-muted)" }}
                     >
-                      Location: {post.location || "-"}
+                      Location:{" "}
+                      {post.location || post.details?.interviewLocation || "-"}
                     </Typography>
                     <Typography
                       sx={{ fontSize: 12, color: "var(--text-muted)" }}
                     >
-                      Salary: Rs. {post.salary || "-"}
+                      Salary: {post.salary || post.details?.salaryInfo || "-"}
                     </Typography>
+                  </Box>
+
+                  <Box sx={{ mt: 1.5, display: "flex", gap: 1, flexWrap: "wrap" }}>
+                    <Chip
+                      label={isWalkIn(post) ? "Walk-in" : "Apply Online"}
+                      size="small"
+                      sx={{
+                        fontWeight: 700,
+                        backgroundColor: isWalkIn(post)
+                          ? "#e9f9ee"
+                          : "var(--secondary-soft)",
+                        color: isWalkIn(post)
+                          ? "#146c2e"
+                          : "var(--secondary)",
+                      }}
+                    />
+                    {post.jobtype && (
+                      <Chip
+                        label={post.jobtype.toUpperCase()}
+                        size="small"
+                        sx={{
+                          fontWeight: 700,
+                          color: "var(--primary)",
+                          backgroundColor: "#e8efff",
+                          border: "1px solid #c8d8ff",
+                        }}
+                      />
+                    )}
                   </Box>
 
                   <Box
@@ -415,22 +437,6 @@ function Job() {
 
                       {post.likes?.length ?? 0}
                     </Typography>
-                    {post?.applyLink && !isMobile && (
-                      <Chip
-                        label="Apply Now"
-                        component="a"
-                        href={post.applyLink}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        clickable
-                        sx={{
-                          backgroundColor: "var(--secondary-soft)",
-                          color: "var(--secondary)",
-                          border: "1px solid #f5b9b9",
-                          fontWeight: 600,
-                        }}
-                      />
-                    )}
                     <Typography
                       onClick={() => handlecommand(post)}
                       variant="caption"
@@ -443,25 +449,30 @@ function Job() {
                       Comments: {post.comments?.length ?? 0}
                     </Typography>
                   </Box>
-                     
-                     {post?.applyLink && isMobile && (
-                      <Chip
-                        label="Apply Now"
+
+                  <Box sx={{ display: "flex", gap: 1, mt: 1.5 }}>
+                    {post?.applyLink && !isWalkIn(post) && (
+                      <Button
                         component="a"
                         href={post.applyLink}
                         target="_blank"
                         rel="noopener noreferrer"
-                        clickable
-                        sx={{
-                          backgroundColor: "var(--secondary-soft)",
-                          color: "var(--secondary)",
-                          border: "1px solid #f5b9b9",
-                          fontWeight: 600,
-                          width:"100%",
-                          marginTop:2
-                        }}
-                      />
+                        variant="outlined"
+                        size="small"
+                        sx={{ textTransform: "none", borderRadius: 2, flex: 1 }}
+                      >
+                        Apply Now
+                      </Button>
                     )}
+                    <Button
+                      variant="contained"
+                      size="small"
+                      onClick={() => navigate(`/jobs/${post._id}`, { state: { post } })}
+                      sx={{ textTransform: "none", borderRadius: 2, flex: 1 }}
+                    >
+                      View More
+                    </Button>
+                  </Box>
                 </CardContent>
               </Card>
             </Grid>
