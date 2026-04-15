@@ -11,22 +11,24 @@ import {
   Drawer,
   Button,
 } from "@mui/material";
-import { getPost} from "../Service/Service";
+import { getPost,likePost} from "../Service/Service";
 import type { Post } from "./type";
 import useResponsive from "../Hooks/CustomHooks";
 import { UseLoader } from "../Hooks/UseLoder";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import {
+  Favorite,
+  FavoriteBorder,
   // Favorite,
   // FavoriteBorder,
   FilterList,
 } from "@mui/icons-material";
 import FilterContent from "../Component/FilterContent";
-// import { useDispatch, useSelector } from "react-redux";
-// import type { RootState } from "../Redux/store";
-// import toast from "react-hot-toast";
-// import { openModal } from "../Redux/Slice/ModalSlice";
+import { useDispatch, useSelector } from "react-redux";
+import type { RootState } from "../Redux/store";
+import toast from "react-hot-toast";
+import { openModal } from "../Redux/Slice/ModalSlice";
 import { useNavigate } from "react-router-dom";
 dayjs.extend(relativeTime);
 
@@ -36,7 +38,7 @@ function Job() {
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
 
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [filter, setFilter] = useState({
     title: "",
@@ -47,62 +49,62 @@ function Job() {
 
   const pageSize = 10;
 
-  // const { isAuthenticated, userdata } = useSelector(
-  //   (state: RootState) => state.auth,
-  // );
+  const { isAuthenticated, userdata } = useSelector(
+    (state: RootState) => state.auth,
+  );
 
   const isWalkIn = (post: Post) =>
     post.applyType === "walk-in" ||
     (!!post.applyLink && post.applyLink.trim().toLowerCase().includes("walk"));
 
 
-  // const handleLike = (postId: string) => {
-  //   if (!isAuthenticated) {
-  //     toast.custom(() => (
-  //       <div
-  //         style={{
-  //           padding: "10px 16px",
-  //           background: "var(--secondary-soft)",
-  //           color: "var(--secondary-dark)",
-  //           borderRadius: "8px",
-  //         }}
-  //       >
-  //         ⚠️ Please login first
-  //       </div>
-  //     ));
-  //     return;
-  //   }
+  const handleLike = (postId: string) => {
+    if (!isAuthenticated) {
+      toast.custom(() => (
+        <div
+          style={{
+            padding: "10px 16px",
+            background: "var(--secondary-soft)",
+            color: "var(--secondary-dark)",
+            borderRadius: "8px",
+          }}
+        >
+          ⚠️ Please login first
+        </div>
+      ));
+      return;
+    }
 
-  //   //@ts-ignore
-  //   likePost(postId, userdata?.user?._id)
-  //     .then((res) => {
-  //       const { likes } = res.data;
+    //@ts-ignore
+    likePost(postId, userdata?.user?._id)
+      .then((res) => {
+        const { likes } = res.data;
 
-  //       // update UI without reload
-  //       setPosts((prev) =>
-  //         prev.map((post) =>
-  //           post._id === postId ? { ...post, likes: likes } : post,
-  //         ),
-  //       );
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // };
+        // update UI without reload
+        setPosts((prev) =>
+          prev.map((post) =>
+            post._id === postId ? { ...post, likes: likes } : post,
+          ),
+        );
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 
-  // const handlecommand = (data: any) => {
-  //   dispatch(
-  //     openModal({
-  //       modalname: "COMMANDMODAL",
-  //       data: {
-  //         size: "md",
-  //         title: "Comments",
-  //         data,
-  //         onok: () => handlegetpostdata(true),
-  //       },
-  //     }),
-  //   );
-  // };
+  const handlecommand = (data: any) => {
+    dispatch(
+      openModal({
+        modalname: "COMMANDMODAL",
+        data: {
+          size: "md",
+          title: "Comments",
+          data,
+          onok: () => handlegetpostdata(true),
+        },
+      }),
+    );
+  };
 
   const { startLoading, stopLoading } = UseLoader();
   const { isMobile } = useResponsive();
@@ -403,7 +405,7 @@ function Job() {
                     )}
                   </Box>
 
-                  {/* <Box
+                   <Box
                     sx={{
                       display: "flex",
                       justifyContent: "space-between",
@@ -448,7 +450,7 @@ function Job() {
                     >
                       Comments: {post.comments?.length ?? 0}
                     </Typography>
-                  </Box> */}
+                  </Box> 
 
                   <Box sx={{ display: "flex", gap: 1, mt: 1.5 }}>
                     {post?.applyLink && !isWalkIn(post) && (
