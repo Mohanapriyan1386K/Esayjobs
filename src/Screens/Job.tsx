@@ -258,7 +258,7 @@ function Job() {
                   border: "1px solid var(--border-soft)",
                   boxShadow: "var(--shadow-soft)",
                   transition: "transform .25s ease, box-shadow .25s ease",
-                  height: !isMobile ? "340px" : "360px",
+                  // height: !isMobile ? "340px" : "360px",
                   position: "relative",
                   overflow: "hidden",
                   "&:hover": {
