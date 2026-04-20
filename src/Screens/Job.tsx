@@ -11,24 +11,14 @@ import {
   Drawer,
   Button,
 } from "@mui/material";
-import { getPost,likePost} from "../Service/Service";
+import { getPost } from "../Service/Service";
 import type { Post } from "./type";
 import useResponsive from "../Hooks/CustomHooks";
 import { UseLoader } from "../Hooks/UseLoder";
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
-import {
-  Favorite,
-  FavoriteBorder,
-  // Favorite,
-  // FavoriteBorder,
-  FilterList,
-} from "@mui/icons-material";
+import { FilterList } from "@mui/icons-material";
 import FilterContent from "../Component/FilterContent";
-import { useDispatch, useSelector } from "react-redux";
-import type { RootState } from "../Redux/store";
-import toast from "react-hot-toast";
-import { openModal } from "../Redux/Slice/ModalSlice";
 import { useNavigate } from "react-router-dom";
 dayjs.extend(relativeTime);
 
@@ -38,7 +28,6 @@ function Job() {
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
 
-  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [filter, setFilter] = useState({
     title: "",
@@ -49,62 +38,34 @@ function Job() {
 
   const pageSize = 10;
 
-  const { isAuthenticated, userdata } = useSelector(
-    (state: RootState) => state.auth,
-  );
-
   const isWalkIn = (post: Post) =>
     post.applyType === "walk-in" ||
     (!!post.applyLink && post.applyLink.trim().toLowerCase().includes("walk"));
 
+  const getApplyEmail = (post: Post) =>
+    post.applyEmail?.trim() || post.details?.applyEmail?.trim() || "";
 
-  const handleLike = (postId: string) => {
-    if (!isAuthenticated) {
-      toast.custom(() => (
-        <div
-          style={{
-            padding: "10px 16px",
-            background: "var(--secondary-soft)",
-            color: "var(--secondary-dark)",
-            borderRadius: "8px",
-          }}
-        >
-          ⚠️ Please login first
-        </div>
-      ));
-      return;
+  const getApplyHref = (post: Post) => {
+    if (post.applyType === "email") {
+      const email = getApplyEmail(post);
+      return email ? `mailto:${email}` : "";
     }
-
-    //@ts-ignore
-    likePost(postId, userdata?.user?._id)
-      .then((res) => {
-        const { likes } = res.data;
-
-        // update UI without reload
-        setPosts((prev) =>
-          prev.map((post) =>
-            post._id === postId ? { ...post, likes: likes } : post,
-          ),
-        );
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    if (post.applyType === "online") {
+      return post.applyLink?.trim() || "";
+    }
+    return "";
   };
 
-  const handlecommand = (data: any) => {
-    dispatch(
-      openModal({
-        modalname: "COMMANDMODAL",
-        data: {
-          size: "md",
-          title: "Comments",
-          data,
-          onok: () => handlegetpostdata(true),
-        },
-      }),
-    );
+  const getApplyLabel = (post: Post) =>
+    post.applyType === "email" ? "Apply via Email" : "Apply Now";
+
+  const getApplyTypeLabel = (post: Post) => {
+    if (isWalkIn(post)) return "Walk-in";
+    if (post.applyType === "email") return "Apply by Email";
+    return "Apply Online";
   };
+
+
 
   const { startLoading, stopLoading } = UseLoader();
   const { isMobile } = useResponsive();
@@ -379,7 +340,7 @@ function Job() {
 
                   <Box sx={{ mt: 1.5, display: "flex", gap: 1, flexWrap: "wrap" }}>
                     <Chip
-                      label={isWalkIn(post) ? "Walk-in" : "Apply Online"}
+                      label={getApplyTypeLabel(post)}
                       size="small"
                       sx={{
                         fontWeight: 700,
@@ -405,7 +366,7 @@ function Job() {
                     )}
                   </Box>
 
-                   <Box
+                   {/* <Box
                     sx={{
                       display: "flex",
                       justifyContent: "space-between",
@@ -450,20 +411,20 @@ function Job() {
                     >
                       Comments: {post.comments?.length ?? 0}
                     </Typography>
-                  </Box> 
+                  </Box>  */}
 
                   <Box sx={{ display: "flex", gap: 1, mt: 1.5 }}>
-                    {post?.applyLink && !isWalkIn(post) && (
+                    {getApplyHref(post) && !isWalkIn(post) && (
                       <Button
                         component="a"
-                        href={post.applyLink}
+                        href={getApplyHref(post)}
                         target="_blank"
                         rel="noopener noreferrer"
                         variant="outlined"
                         size="small"
                         sx={{ textTransform: "none", borderRadius: 2, flex: 1 }}
                       >
-                        Apply Now
+                        {getApplyLabel(post)}
                       </Button>
                     )}
                     <Button

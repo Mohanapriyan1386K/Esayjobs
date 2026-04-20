@@ -12,8 +12,9 @@ export interface Post {
   _id: string;
   userId: string;
   type: PostType;
-  applyType?: "walk-in" | "online";
+  applyType?: "walk-in" | "online" | "email";
   applyLink?: string;
+  applyEmail?: string;
   title: string;
   image?: string;
   description: string;
@@ -41,6 +42,7 @@ export interface Post {
     hrNumber?: string;
     rounds?: string;
     walkInInfo?: string;
+    applyEmail?: string;
   };
   likes: string[]; // array of userIds
   comments: Comment[];

@@ -18,13 +18,18 @@ function JobFormamodal({ mode, onok, data }: any) {
     jobtype: data?.jobtype ?? "",
     applyType:
       data?.applyType ??
-      (data?.applyLink?.toLowerCase()?.includes("walk") ? "walk-in" : "online"),
+      (data?.applyLink?.toLowerCase()?.includes("walk")
+        ? "walk-in"
+        : data?.applyEmail || data?.details?.applyEmail
+          ? "email"
+          : "online"),
     title: data?.title ?? "",
     content: data?.content ?? data?.description ?? "",
     location: data?.location ?? "",
     salary: data?.salary ?? "",
     company: data?.company ?? "",
     applyLink: data?.applyLink ?? "",
+    applyEmail: data?.applyEmail ?? data?.details?.applyEmail ?? "",
     details: {
       companyName: data?.details?.companyName ?? data?.company ?? "",
       interviewLocation: data?.details?.interviewLocation ?? data?.location ?? "",
@@ -44,6 +49,7 @@ function JobFormamodal({ mode, onok, data }: any) {
       hrNumber: data?.details?.hrNumber ?? "",
       rounds: data?.details?.rounds ?? "",
       walkInInfo: data?.details?.walkInInfo ?? "",
+      applyEmail: data?.details?.applyEmail ?? data?.applyEmail ?? "",
     },
   };
 
@@ -53,7 +59,7 @@ function JobFormamodal({ mode, onok, data }: any) {
   const validationSchema = Yup.object({
     jobtype: Yup.string().required("Job type is required"),
     applyType: Yup.string()
-      .oneOf(["walk-in", "online"])
+      .oneOf(["walk-in", "online", "email"])
       .required("Apply type is required"),
     title: Yup.string().required("Title is required"),
     content: Yup.string(),
@@ -64,6 +70,14 @@ function JobFormamodal({ mode, onok, data }: any) {
       is: "online",
       then: (schema) =>
         schema.url("Enter valid URL").required("Apply link is required"),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    applyEmail: Yup.string().when("applyType", {
+      is: "email",
+      then: (schema) =>
+        schema
+          .email("Enter valid email")
+          .required("Apply email is required"),
       otherwise: (schema) => schema.notRequired(),
     }),
     details: Yup.object({
@@ -85,6 +99,7 @@ function JobFormamodal({ mode, onok, data }: any) {
       hrNumber: Yup.string(),
       rounds: Yup.string(),
       walkInInfo: Yup.string(),
+      applyEmail: Yup.string(),
     }),
   });
 
@@ -103,6 +118,10 @@ function JobFormamodal({ mode, onok, data }: any) {
         userId,
         ...values,
         description: values.content,
+        details: {
+          ...values.details,
+          applyEmail: values.applyEmail || values.details.applyEmail || "",
+        },
       };
 
       if (mode === "Edit") {
@@ -199,11 +218,20 @@ function JobFormamodal({ mode, onok, data }: any) {
         options={[
           { label: "Walk-in", value: "walk-in" },
           { label: "Online", value: "online" },
+          {label:"Email",value:"email"}
         ]}
         onChange={(val) => {
           setFieldValue("applyType", val);
-          if (val === "walk-in" && !values.applyLink) {
+          if (val === "walk-in") {
             setFieldValue("applyLink", "walk-in");
+            setFieldValue("applyEmail", "");
+          }
+          if (val === "online") {
+            setFieldValue("applyLink", "");
+            setFieldValue("applyEmail", "");
+          }
+          if (val === "email") {
+            setFieldValue("applyLink", "");
           }
         }}
       />
@@ -266,12 +294,20 @@ function JobFormamodal({ mode, onok, data }: any) {
         formik={formik}
       />
 
-      {/* Link */}
+      {/* Apply Contact */}
       {values.applyType === "online" ? (
         <CustomTextField
           name="applyLink"
           labelname="Apply Link"
           value={values.applyLink}
+          onChange={handleChange}
+          formik={formik}
+        />
+      ) : values.applyType === "email" ? (
+        <CustomTextField
+          name="applyEmail"
+          labelname="Apply Email"
+          value={values.applyEmail}
           onChange={handleChange}
           formik={formik}
         />

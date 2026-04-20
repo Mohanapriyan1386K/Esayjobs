@@ -17,6 +17,20 @@ function Jobdeatils() {
   const isWalkIn =
     post?.applyType === "walk-in" ||
     !!post?.applyLink?.toLowerCase().includes("walk");
+  const applyEmail = post?.applyEmail || post?.details?.applyEmail || "";
+  const applyHref =
+    post?.applyType === "email"
+      ? applyEmail
+        ? `mailto:${applyEmail}`
+        : ""
+      : post?.applyType === "online"
+        ? post?.applyLink || ""
+        : "";
+  const applyTypeLabel = isWalkIn
+    ? "Walk-in"
+    : post?.applyType === "email"
+      ? "Apply by Email"
+      : "Apply Online";
 
   if (!post) {
     return (
@@ -40,8 +54,9 @@ function Jobdeatils() {
     { label: "Company", value: post.company || details.companyName },
     { label: "Location", value: post.location || details.interviewLocation },
     { label: "Salary", value: post.salary || details.salaryInfo },
-    { label: "Apply Type", value: isWalkIn ? "Walk-in" : "Online" },
+    { label: "Apply Type", value: applyTypeLabel },
     { label: "Apply Link", value: post.applyLink },
+    { label: "Apply Email", value: applyEmail },
     { label: "Interview Timings", value: details.interviewTimings },
     { label: "Interview Date", value: details.interviewDate },
     { label: "Job Role", value: details.jobRole },
@@ -84,7 +99,7 @@ function Jobdeatils() {
               {post.title}
             </Typography>
             <Chip
-              label={isWalkIn ? "Walk-in" : "Apply Online"}
+              label={applyTypeLabel}
               sx={{ fontWeight: 700 }}
             />
           </Box>
@@ -114,6 +129,19 @@ function Jobdeatils() {
               </Grid>
             ))}
           </Grid>
+
+          {applyHref && (
+            <Button
+              component="a"
+              href={applyHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              variant="contained"
+              sx={{ textTransform: "none", mt: 2 }}
+            >
+              {post?.applyType === "email" ? "Apply via Email" : "Apply Now"}
+            </Button>
+          )}
         </CardContent>
       </Card>
     </Box>
