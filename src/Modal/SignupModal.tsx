@@ -8,8 +8,6 @@ import { UseLoader } from "../Hooks/UseLoder";
 import { useDispatch } from "react-redux";
 import { closeModal, openModal } from "../Redux/Slice/ModalSlice";
 import React from "react";
-import { Images } from "../Constent/Image";
-import { Paper } from "@mui/material";
 
 const loginSchema = Yup.object({
   name: Yup.string().required("Name required"),
