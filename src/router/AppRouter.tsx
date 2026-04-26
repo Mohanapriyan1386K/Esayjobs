@@ -6,11 +6,13 @@ import BlogScreen from "../Screens/BlogScreen";
 import UserPosts from "../Screens/UserPosts";
 import ProtectedRoute from "./ProtectedRoute";
 import Jobdeatils from "../Screens/Jobdeatils";
+import VerifyEmail from "../Screens/VerifyEmail";
 
 const AppRouter = () => {
   return (
     <BrowserRouter>
       <Routes>
+         <Route path="/verify-email" element={<VerifyEmail />} />
         <Route path="/" element={<MainLayout />}>
           <Route index element={<About />} />
           <Route path="jobs" element={<Job />} />
