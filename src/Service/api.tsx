@@ -3,9 +3,15 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 
-const apiBaseUrl = (
-  import.meta.env.VITE_API_URL || "http://localhost:3000"
-).replace(/\/+$/, "");
+const normalizeApiUrl = (url?: string) => {
+  const raw = (url || "http://localhost:3000").trim().replace(/\/+$/, "");
+
+  // Ensure absolute URL in production even when env var is missing protocol.
+  if (/^https?:\/\//i.test(raw)) return raw;
+  return `https://${raw}`;
+};
+
+const apiBaseUrl = normalizeApiUrl(import.meta.env.VITE_API_URL);
 
 const api = axios.create({
   baseURL: `${apiBaseUrl}/`,
