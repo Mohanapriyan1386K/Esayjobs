@@ -2,7 +2,7 @@ import { useState } from "react";
 import {
   AppBar,
   Toolbar,
-  Typography,
+  // Typography,
   Button,
   Box,
   Container,
@@ -10,19 +10,19 @@ import {
   Drawer,
   List,
   ListItem,
-  ListItemButton,
-  ListItemText,
+  // ListItemButton,
+  // ListItemText,
   Avatar,
-  Menu,
-  Divider,
-  MenuItem,
+  // Menu,
+  // Divider,
+  // MenuItem,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { openModal } from "../Redux/Slice/ModalSlice";
 import type { RootState } from "../Redux/store";
-import useResponsive from "../Hooks/CustomHooks";
+// import useResponsive from "../Hooks/CustomHooks";
 
 const navLinks = [
   { label: "About", path: "/" },
@@ -33,8 +33,8 @@ const Navbar = () => {
   const location = useLocation();
   const [open, setOpen] = useState(false);
 
-  const navigate = useNavigate();
-  const {isMobile}=useResponsive()
+  // const navigate = useNavigate();
+  // const {isMobile}=useResponsive()
 
   const dispatch = useDispatch();
   const { isAuthenticated, userdata } = useSelector(
@@ -45,17 +45,17 @@ const Navbar = () => {
     setOpen(state);
   };
 
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const openMenu = Boolean(anchorEl);
+  // const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  // const openMenu = Boolean(anchorEl);
 
-  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
+  // const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+  //   setAnchorEl(event.currentTarget);
+  // };
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-    navigate("/userposts");
-  };
+  // const handleMenuClose = () => {
+  //   setAnchorEl(null);
+  //   navigate("/userposts");
+  // };
 
   const handelmodalOpen = (method: "login" | "signup" | "Logout") => {
     console.log("open modal");
