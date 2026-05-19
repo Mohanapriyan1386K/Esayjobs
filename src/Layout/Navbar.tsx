@@ -141,7 +141,7 @@ const Navbar = () => {
                 })}
             </Box>
 
-            {!isAuthenticated && (
+            {/* {!isAuthenticated && (
               <Box
                 sx={{
                   display: { xs: "none", md: "flex" },
@@ -149,7 +149,7 @@ const Navbar = () => {
                 }}
               >
                 <Button
-                  // Use a plain button so the click only opens the modal
+                 
                   component="button"
                   onClick={() => handelmodalOpen("login")}
                   sx={{ textTransform: "none", color: "var(--text-main)" }}
@@ -172,11 +172,11 @@ const Navbar = () => {
                   Sign Up
                 </Button>
               </Box>
-            )}
+            )} */}
 
-            {isAuthenticated && !isMobile &&(
+            {/* {isAuthenticated && !isMobile &&(
               <Box>
-                {/* Profile Click */}
+     
                 <Box
                   onClick={handleMenuOpen}
                   sx={{
@@ -192,7 +192,7 @@ const Navbar = () => {
                   </Typography>
                 </Box>
 
-                {/* Dropdown */}
+               
                 <Menu
                   anchorEl={anchorEl}
                   open={openMenu}
@@ -206,7 +206,7 @@ const Navbar = () => {
                     horizontal: "right",
                   }}
                 >
-                  {/* Profile Info */}
+                 
                   <Box sx={{ px: 2, py: 1 }}>
                     <Typography>{userdata?.user?.name}</Typography>
                     <Typography variant="body2" color="text.secondary">
@@ -215,8 +215,6 @@ const Navbar = () => {
                   </Box>
 
                   <Divider />
-
-                  {/* Menu Items */}
                   <MenuItem onClick={handleMenuClose}>My Posts</MenuItem>
 
                   <MenuItem
@@ -230,7 +228,7 @@ const Navbar = () => {
                   </MenuItem>
                 </Menu>
               </Box>
-            )}
+            )} */}
 
             {/* Mobile Menu Icon */}
             <IconButton
@@ -266,7 +264,7 @@ const Navbar = () => {
             </Box>
           )}
           <List>
-            {navLinks
+            {/* {navLinks
               .filter((item) => !item.private || isAuthenticated)
               .map((item) => (
                 <ListItem key={item.path} disablePadding>
@@ -278,8 +276,8 @@ const Navbar = () => {
                     <ListItemText primary={item.label} />
                   </ListItemButton>
                 </ListItem>
-              ))}
-
+              ))} */}
+{/* 
             {isAuthenticated && (
               <ListItem>
                 <Button
@@ -289,7 +287,6 @@ const Navbar = () => {
                     "&:hover": { backgroundColor: "var(--secondary-dark)" },
                   }}
                   fullWidth
-                  // Open modal on mobile too, then close drawer
                   component="button"
                   onClick={() => {
                     handelmodalOpen("Logout");
@@ -299,7 +296,7 @@ const Navbar = () => {
                   Logout
                 </Button>
               </ListItem>
-            )}
+            )} */}
 
             {!isAuthenticated && (
               <div>
